@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Video Separator — Extract Audio from Video</title>
+<script>
+  /* Apply saved theme BEFORE page renders to avoid flash */
+  (function () {
+    try {
+      var t = localStorage.getItem("vs-theme") || "dark";
+      var effective = t;
+      if (t === "system") {
+        effective = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", effective);
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root,
+  :root[data-theme="dark"] {
+    --bg-0: #0b1020;
+    --bg-1: #10172e;
+    --panel: rgba(20, 28, 52, 0.72);
+    --panel-solid: #141c34;
+    --border: rgba(120, 150, 220, 0.18);
+    --border-strong: rgba(120, 150, 220, 0.35);
+    --text: #e6ecff;
+    --muted: #9aa8c7;
+    --accent: #4f8cff;
+    --accent-2: #6ee7ff;
+    --success: #34d399;
+    --error: #f87171;
+    --warning: #fbbf24;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --bg-overlay-1: rgba(79, 140, 255, 0.20);
+    --bg-overlay-2: rgba(110, 231, 255, 0.14);
+    --bg-overlay-base-1: rgba(11,16,32,0.85);
+    --bg-overlay-base-2: rgba(11,16,32,0.95);
+    --canvas-top: rgba(110, 231, 255, 0.35);
+    --canvas-bottom: rgba(79, 140, 255, 0.03);
+
+    --drop-bg: rgba(79, 140, 255, 0.04);
+    --drop-bg-hover: rgba(79, 140, 255, 0.10);
+    --file-info-bg: rgba(79, 140, 255, 0.08);
+    --segment-bg: rgba(0,0,0,0.25);
+    --item-bg: rgba(255,255,255,0.03);
+    --item-hover: rgba(79, 140, 255, 0.07);
+    --badge-bg: rgba(79, 140, 255, 0.15);
+    --btn-ghost-bg: rgba(255,255,255,0.05);
+    --btn-ghost-bg-hover: rgba(255,255,255,0.10);
+    --mini-bar-bg: rgba(255,255,255,0.07);
+    --icon-btn-bg: rgba(255,255,255,0.05);
+    --icon-btn-bg-hover: rgba(79,140,255,0.18);
+    --url-icon-bg: rgba(79, 140, 255, 0.15);
+    --scrollbar-thumb: rgba(120,150,220,0.25);
+    --logo-glow: rgba(79, 140, 255, 0.35);
+  }
+
+  :root[data-theme="light"] {
+    --bg-0: #eef2f9;
+    --bg-1: #ffffff;
+    --panel: rgba(255, 255, 255, 0.85);
+    --panel-solid: #ffffff;
+    --border: rgba(30, 60, 120, 0.14);
+    --border-strong: rgba(30, 60, 120, 0.28);
+    --text: #0f1830;
+    --muted: #5a6785;
+    --accent: #2563eb;
+    --accent-2: #0891b2;
+    --success: #059669;
+    --error: #dc2626;
+    --warning: #d97706;
+    --shadow: 0 10px 30px rgba(20, 40, 80, 0.10);
+
+    --bg-overlay-1: rgba(79, 140, 255, 0.14);
+    --bg-overlay-2: rgba(8, 145, 178, 0.10);
+    --bg-overlay-base-1: rgba(238, 242, 249, 0.85);
+    --bg-overlay-base-2: rgba(238, 242, 249, 0.95);
+    --canvas-top: rgba(8, 145, 178, 0.30);
+    --canvas-bottom: rgba(37, 99, 235, 0.03);
+
+    --drop-bg: rgba(37, 99, 235, 0.04);
+    --drop-bg-hover: rgba(37, 99, 235, 0.08);
+    --file-info-bg: rgba(37, 99, 235, 0.06);
+    --segment-bg: rgba(15, 24, 48, 0.05);
+    --item-bg: rgba(15, 24, 48, 0.02);
+    --item-hover: rgba(37, 99, 235, 0.06);
+    --badge-bg: rgba(37, 99, 235, 0.12);
+    --btn-ghost-bg: rgba(15, 24, 48, 0.04);
+    --btn-ghost-bg-hover: rgba(15, 24, 48, 0.08);
+    --mini-bar-bg: rgba(15, 24, 48, 0.06);
+    --icon-btn-bg: rgba(15, 24, 48, 0.04);
+    --icon-btn-bg-hover: rgba(37, 99, 235, 0.14);
+    --url-icon-bg: rgba(37, 99, 235, 0.12);
+    --scrollbar-thumb: rgba(30, 60, 120, 0.20);
+    --logo-glow: rgba(37, 99, 235, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--bg-0);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(1200px 600px at 20% -10%, var(--bg-overlay-1), transparent 60%),
+      radial-gradient(1000px 500px at 90% 110%, var(--bg-overlay-2), transparent 60%),
+      linear-gradient(180deg, var(--bg-overlay-base-1) 0%, var(--bg-overlay-base-2) 100%);
+    pointer-events: none;
+    transition: background 0.35s ease;
+  }
+
+  .app {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 12px; }
+
+  .logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 20px var(--logo-glow);
+  }
+  .logo svg { width: 24px; height: 24px; }
+
+  .brand h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+  .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ============================================================
+     THEME TOGGLE BUTTON
+     ============================================================ */
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background 0.25s, border-color 0.25s, transform 0.2s, color 0.25s;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    font-family: inherit;
+  }
+  .theme-toggle:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    color: var(--accent-2);
+  }
+  .theme-toggle:active { transform: translateY(0); }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .theme-toggle svg {
+    position: absolute;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+  }
+  .theme-toggle .icon-sun {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  .theme-toggle .icon-moon {
+    transform: rotate(-90deg) scale(0.5);
+    opacity: 0;
+  }
+  :root[data-theme="light"] .theme-toggle .icon-sun {
+    transform: rotate(90deg) scale(0.5);
+    opacity: 0;
+  }
+  :root[data-theme="light"] .theme-toggle .icon-moon {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    backdrop-filter: blur(10px);
+    transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+  }
+
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--warning);
+    box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15);
+    transition: background 0.3s;
+  }
+  .dot.online { background: var(--success); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.15); }
+  .dot.offline { background: var(--error); box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.15); }
+
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+    transition: background-color 0.35s ease, border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  }
+  .card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+
+  .card h2 { margin: 0 0 6px; font-size: 16px; letter-spacing: -0.01em; }
+  .card .sub { margin: 0 0 18px; font-size: 13px; color: var(--muted); }
+
+  .drop {
+    border: 2px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 28px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.35s, transform 0.2s;
+    background: var(--drop-bg);
+  }
+  .drop:hover, .drop.dragover {
+    border-color: var(--accent);
+    background: var(--drop-bg-hover);
+    transform: translateY(-1px);
+  }
+  .drop .icon {
+    width: 46px; height: 46px;
+    margin: 0 auto 10px;
+    border-radius: 12px;
+    background: var(--badge-bg);
+    display: grid; place-items: center;
+    color: var(--accent-2);
+  }
+  .drop .icon svg { width: 24px; height: 24px; }
+  .drop strong { display: block; font-size: 14px; margin-bottom: 4px; }
+  .drop span { font-size: 12px; color: var(--muted); }
+
+  .file-info {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--file-info-bg);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    transition: background-color 0.35s ease;
+  }
+  .file-info.visible { display: block; }
+  .file-info .name { font-weight: 600; word-break: break-all; }
+  .file-info .meta { color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .row + .row { margin-top: 12px; }
+
+  .segment {
+    display: inline-flex;
+    background: var(--segment-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    transition: background-color 0.35s ease;
+  }
+  .segment button {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, transform 0.15s;
+    font-family: inherit;
+  }
+  .segment button:hover { color: var(--text); }
+  .segment button.active {
+    background: linear-gradient(135deg, var(--accent), #3f74d6);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(79, 140, 255, 0.35);
+  }
+  .segment button:active { transform: scale(0.97); }
+
+  .quality-hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .quality-hint b { color: var(--accent-2); }
+
+  .btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #3f74d6);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(79, 140, 255, 0.30);
+  }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(79, 140, 255, 0.40); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-ghost {
+    background: var(--btn-ghost-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    transition: background-color 0.25s, border-color 0.25s, color 0.25s, transform 0.15s;
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--btn-ghost-bg-hover); border-color: var(--border-strong); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .progress-wrap { margin-top: 16px; display: none; }
+  .progress-wrap.visible { display: block; }
+  .progress-bar {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--mini-bar-bg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: background-color 0.35s ease;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .progress-meta .msg { color: var(--text); }
+
+  .list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .list-head h2 { margin: 0; }
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .list::-webkit-scrollbar { width: 8px; }
+  .list::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 8px; }
+
+  .item {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--item-bg);
+    border: 1px solid var(--border);
+    transition: background-color 0.35s, border-color 0.2s, transform 0.2s;
+  }
+  .item:hover {
+    background: var(--item-hover);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .item .badge {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: var(--badge-bg);
+    color: var(--accent-2);
+    transition: background-color 0.35s ease;
+  }
+  .item .badge.mp3 { background: rgba(110, 231, 255, 0.14); color: #7de3ff; }
+  .item .badge.wav { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; }
+
+  .item .info { min-width: 0; }
+  .item .info .title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item .info .meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .item .info .mini-bar {
+    height: 5px;
+    margin-top: 8px;
+    background: var(--mini-bar-bg);
+    border-radius: 999px;
+    overflow: hidden;
+    transition: background-color 0.35s ease;
+  }
+  .item .info .mini-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.35s ease;
+  }
+
+  .status-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .status-tag.queued { background: rgba(251,191,36,0.15); color: var(--warning); }
+  .status-tag.processing { background: rgba(79,140,255,0.18); color: #9cc2ff; }
+  .status-tag.completed { background: rgba(52,211,153,0.15); color: var(--success); }
+  .status-tag.error { background: rgba(248,113,113,0.15); color: var(--error); }
+
+  .item .actions { display: flex; gap: 6px; align-items: center; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--icon-btn-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color 0.25s, border-color 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .icon-btn:hover { background: var(--icon-btn-bg-hover); border-color: var(--border-strong); transform: translateY(-1px); }
+  .icon-btn:active { transform: translateY(0); }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .icon-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+  .empty {
+    text-align: center;
+    padding: 32px 12px;
+    color: var(--muted);
+    font-size: 13px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+
+  /* URL + Copy card */
+  .url-box {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .url-box .url-icon {
+    width: 64px; height: 64px;
+    border-radius: 14px;
+    background: var(--url-icon-bg);
+    display: grid; place-items: center;
+    color: var(--accent-2);
+    flex-shrink: 0;
+    transition: background-color 0.35s ease;
+  }
+  .url-box .url-icon svg { width: 30px; height: 30px; }
+  .url-info { flex: 1; min-width: 220px; }
+  .url-info .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .url-info .url {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent-2);
+    word-break: break-all;
+    margin-top: 4px;
+  }
+  .url-info .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .url-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--accent-2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--panel-solid);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s, background-color 0.35s ease, color 0.35s ease;
+    z-index: 100;
+    max-width: 90vw;
+    box-shadow: var(--shadow);
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.error { border-color: rgba(248,113,113,0.5); }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="bg-overlay"></div>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/>
+          <circle cx="18" cy="16" r="3"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Video Separator</h1>
+        <p>Extract high-quality audio from any video</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <div class="status-pill">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Connecting…</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Extract Audio</h2>
+      <p class="sub">Upload a video file, choose your output format, and start extraction.</p>
+
+      <div class="drop" id="drop">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <strong>Drop your video here</strong>
+        <span>or click to browse — MP4, MKV, AVI, MOV, WMV, FLV, WEBM, M4V, TS, 3GP</span>
+        <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov,.wmv,.flv,.webm,.m4v,.ts,.3gp" hidden />
+      </div>
+
+      <div class="file-info" id="fileInfo">
+        <div class="name" id="fileName"></div>
+        <div class="meta" id="fileMeta"></div>
+      </div>
+
+      <div class="row" style="margin-top: 16px;">
+        <div class="segment" id="formatSegment">
+          <button data-format="mp3" class="active">MP3</button>
+          <button data-format="wav">WAV</button>
+        </div>
+        <button class="btn btn-primary" id="extractBtn" disabled>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Extract Audio
+        </button>
+      </div>
+      <div class="quality-hint" id="qualityHint">
+        MP3 output is encoded at <b>320 kbps</b> — the highest standard MP3 bitrate.
+      </div>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-meta">
+          <span class="msg" id="progressMsg">Preparing…</span>
+          <span id="progressPct">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="list-head">
+        <h2>Extracted Audio</h2>
+        <button class="btn btn-ghost" id="refreshBtn" title="Refresh list">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+      <div class="list" id="list">
+        <div class="empty" id="emptyState">No audio extracted yet. Upload a video to get started.</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top: 20px;">
+    <h2>Access from another device</h2>
+    <p class="sub">Open this URL on any device connected to the same Wi-Fi/LAN.</p>
+    <div class="url-box">
+      <div class="url-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+      </div>
+      <div class="url-info">
+        <div class="label">Network URL</div>
+        <div class="url" id="networkUrl">Detecting…</div>
+        <div class="hint">Type this address into any phone, tablet or computer on the same network.</div>
+      </div>
+      <div class="url-actions">
+        <button class="btn btn-ghost" id="copyUrlBtn" title="Copy URL">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Video Separator · Powered by Flask, Node.js, FFmpeg &amp; SSE
+  </footer>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+(function () {
+  const STORAGE_KEY = "vs-theme";
+  const root = document.documentElement;
+
+  function getStored() {
+    try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+  }
+  function setStored(v) {
+    try { localStorage.setItem(STORAGE_KEY, v); } catch {}
+  }
+  function systemPrefersDark() {
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function apply(theme) {
+    let effective = theme;
+    if (theme === "system") {
+      effective = systemPrefersDark() ? "dark" : "light";
+    }
+    root.setAttribute("data-theme", effective);
+  }
+
+  // Initial apply (also handled by inline script in <head> to avoid flash)
+  apply(getStored() || "dark");
+
+  // React to OS changes when "system" is chosen
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if ((getStored() || "dark") === "system") apply("system");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const current = getStored() || "dark";
+      const currentlyDark = current === "dark" || (current === "system" && systemPrefersDark());
+      const next = currentlyDark ? "light" : "dark";
+      setStored(next);
+      apply(next);
+      if (typeof showToast === "function") showToast("Theme: " + next);
+    });
+  });
+})();
+
+/* ============================================================
+   Animated background: subtle audio-wave / equalizer motion
+   ============================================================ */
+(() => {
+  const canvas = document.getElementById("bg-canvas");
+  const ctx = canvas.getContext("2d");
+  let w, h, dpr;
+  const bars = 90;
+  const phases = new Array(bars).fill(0).map(() => Math.random() * Math.PI * 2);
+  const speeds = new Array(bars).fill(0).map(() => 0.006 + Math.random() * 0.012);
+
+  function getVar(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    w = canvas.width = Math.floor(window.innerWidth * dpr);
+    h = canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  let t = 0;
+  function draw() {
+    t += 1;
+    ctx.clearRect(0, 0, w, h);
+
+    const topColor = getVar("--canvas-top", "rgba(110, 231, 255, 0.35)");
+    const bottomColor = getVar("--canvas-bottom", "rgba(79, 140, 255, 0.03)");
+
+    const barW = w / bars;
+    for (let i = 0; i < bars; i++) {
+      phases[i] += speeds[i];
+      const amp =
+        Math.sin(phases[i]) * 0.35 +
+        Math.sin(phases[i] * 1.7 + i * 0.08) * 0.25 +
+        Math.sin(t * 0.004 + i * 0.05) * 0.25;
+      const norm = Math.max(0.04, Math.min(1, 0.5 + amp * 0.6));
+      const barH = norm * h * 0.35;
+      const x = i * barW;
+      const y = h - barH - 8 * dpr;
+      const grad = ctx.createLinearGradient(0, y, 0, h);
+      grad.addColorStop(0, topColor);
+      grad.addColorStop(1, bottomColor);
+      ctx.fillStyle = grad;
+      ctx.fillRect(x + 2, y, Math.max(1, barW - 4), barH);
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   App state + helpers
+   ============================================================ */
+const state = {
+  file: null,
+  format: "mp3",
+  tasks: [],
+  eventSource: null,
+  currentTaskId: null,
+};
+
+const $ = (id) => document.getElementById(id);
+const API = ""; // same-origin (Node proxies /api to Flask)
+
+function showToast(msg, isError = false) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.toggle("error", isError);
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+function humanSize(bytes) {
+  if (!bytes || bytes <= 0) return "-";
+  const units = ["B", "KB", "MB", "GB"];
+  let i = 0, n = bytes;
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+  return `${n.toFixed(1)} ${units[i]}`;
+}
+
+function fmtTime(iso) {
+  if (!iso) return "";
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString();
+  } catch { return iso; }
+}
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+/* ============================================================
+   File selection
+   ============================================================ */
+const drop = $("drop");
+const fileInput = $("fileInput");
+
+drop.addEventListener("click", () => fileInput.click());
+drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("dragover"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
+drop.addEventListener("drop", (e) => {
+  e.preventDefault();
+  drop.classList.remove("dragover");
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) setFile(f);
+});
+fileInput.addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (f) setFile(f);
+});
+
+function setFile(f) {
+  state.file = f;
+  $("fileName").textContent = f.name;
+  $("fileMeta").textContent = `${humanSize(f.size)} · ${f.type || "video"}`;
+  $("fileInfo").classList.add("visible");
+  $("extractBtn").disabled = false;
+}
+
+/* ============================================================
+   Format selector
+   ============================================================ */
+document.querySelectorAll("#formatSegment button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#formatSegment button").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.format = btn.dataset.format;
+    $("qualityHint").innerHTML = state.format === "mp3"
+      ? 'MP3 output is encoded at <b>320 kbps</b> — the highest standard MP3 bitrate.'
+      : 'WAV output is <b>lossless / uncompressed</b> (PCM 16-bit) — full quality.';
+  });
+});
+
+/* ============================================================
+   Extract
+   ============================================================ */
+$("extractBtn").addEventListener("click", async () => {
+  if (!state.file) { showToast("Please select a video file.", true); return; }
+
+  const btn = $("extractBtn");
+  btn.disabled = true;
+  btn.innerHTML = "Uploading…";
+
+  const fd = new FormData();
+  fd.append("video", state.file);
+  fd.append("format", state.format);
+
+  try {
+    const res = await fetch(`${API}/api/upload`, { method: "POST", body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+
+    state.currentTaskId = data.task_id;
+    $("progressWrap").classList.add("visible");
+    setProgress(0, "Uploaded. Starting extraction…");
+
+    attachTaskStream(data.task_id);
+    showToast("Extraction started.");
+    state.file = null;
+    fileInput.value = "";
+    $("fileInfo").classList.remove("visible");
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg> Extract Audio`;
+  } catch (err) {
+    showToast(err.message, true);
+    btn.disabled = false;
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg> Extract Audio`;
+  }
+});
+
+function setProgress(pct, msg) {
+  pct = Math.max(0, Math.min(100, pct));
+  $("progressFill").style.width = pct + "%";
+  $("progressPct").textContent = pct + "%";
+  if (msg) $("progressMsg").textContent = msg;
+}
+
+function attachTaskStream(taskId) {
+  if (state.eventSource) {
+    try { state.eventSource.close(); } catch {}
+    state.eventSource = null;
+  }
+  const es = new EventSource(`${API}/api/events/${taskId}`);
+  state.eventSource = es;
+
+  es.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      if (data.progress !== undefined) setProgress(data.progress, data.message);
+      if (data.status === "completed") {
+        setProgress(100, "Completed");
+        showToast("Extraction completed!");
+        es.close();
+        state.eventSource = null;
+        refreshTasks();
+      } else if (data.status === "error") {
+        setProgress(0, data.message || "Error");
+        showToast(data.message || "Extraction failed", true);
+        es.close();
+        state.eventSource = null;
+      }
+    } catch (e) { /* ignore */ }
+  };
+  es.onerror = () => { /* EventSource will retry */ };
+}
+
+/* ============================================================
+   Global task stream + list rendering
+   ============================================================ */
+function attachGlobalStream() {
+  const es = new EventSource(`${API}/api/events`);
+  es.onopen = () => setStatus(true);
+  es.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      if (data.tasks) {
+        state.tasks = data.tasks;
+        renderTasks();
+      } else if (data.type === "task_update" && data.task) {
+        const idx = state.tasks.findIndex((t) => t.id === data.task.id);
+        if (idx >= 0) state.tasks[idx] = data.task;
+        else state.tasks.unshift(data.task);
+        renderTasks();
+      }
+    } catch {}
+  };
+  es.onerror = () => setStatus(false);
+}
+
+function setStatus(online) {
+  const dot = $("statusDot");
+  const txt = $("statusText");
+  dot.classList.toggle("online", online);
+  dot.classList.toggle("offline", !online);
+  txt.textContent = online ? "Connected" : "Disconnected";
+}
+
+async function refreshTasks() {
+  try {
+    const res = await fetch(`${API}/api/tasks`);
+    const data = await res.json();
+    state.tasks = data.tasks || [];
+    renderTasks();
+    showToast("List refreshed.");
+  } catch {
+    showToast("Failed to refresh.", true);
+  }
+}
+
+$("refreshBtn").addEventListener("click", refreshTasks);
+
+function renderTasks() {
+  const list = $("list");
+  if (!state.tasks.length) {
+    list.innerHTML = `<div class="empty" id="emptyState">No audio extracted yet. Upload a video to get started.</div>`;
+    return;
+  }
+
+  list.innerHTML = state.tasks.map((t) => {
+    const badge = (t.format || "").toUpperCase();
+    const badgeCls = t.format === "wav" ? "wav" : "mp3";
+    const statusCls = t.status || "queued";
+    const size = t.size_human && t.size_human !== "-" ? t.size_human : humanSize(t.size);
+    const date = fmtTime(t.completed_at || t.created_at);
+    const downloadDisabled = t.status !== "completed" || !t.download_url;
+
+    const progressBar = (t.status === "processing" || t.status === "queued")
+      ? `<div class="mini-bar"><div class="mini-fill" style="width:${t.progress || 0}%"></div></div>`
+      : "";
+
+    const downloadBtn = downloadDisabled
+      ? `<span class="icon-btn disabled" title="Not ready">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+             <polyline points="7 10 12 15 17 10"/>
+             <line x1="12" y1="15" x2="12" y2="3"/>
+           </svg>
+         </span>`
+      : `<a class="icon-btn" href="${API}${t.download_url}" title="Download">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+             <polyline points="7 10 12 15 17 10"/>
+             <line x1="12" y1="15" x2="12" y2="3"/>
+           </svg>
+         </a>`;
+
+    return `
+      <div class="item">
+        <div class="badge ${badgeCls}">${badge}</div>
+        <div class="info">
+          <div class="title">${escapeHtml(t.output_file || t.base_name + "." + (t.format || ""))}</div>
+          <div class="meta">
+            <span>${escapeHtml(size)}</span>
+            <span>${escapeHtml(date)}</span>
+            <span class="status-tag ${statusCls}">${statusCls}</span>
+          </div>
+          ${progressBar}
+          <div class="meta" style="margin-top:6px;">${escapeHtml(t.message || "")}</div>
+        </div>
+        <div class="actions">${downloadBtn}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ============================================================
+   Network URL + Copy
+   ============================================================ */
+function loadNetworkInfo() {
+  const url = window.location.origin;
+  $("networkUrl").textContent = url;
+
+  fetch(`${API}/api/network`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (d && d.lan_url) {
+        $("networkUrl").textContent = d.lan_url;
+      }
+    })
+    .catch(() => { /* keep origin */ });
+}
+
+$("copyUrlBtn").addEventListener("click", async () => {
+  const url = $("networkUrl").textContent || window.location.origin;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    showToast("URL copied to clipboard.");
+  } catch {
+    showToast("Could not copy — please copy manually.", true);
+  }
+});
+
+/* ============================================================
+   Init
+   ============================================================ */
+window.addEventListener("load", () => {
+  loadNetworkInfo();
+  attachGlobalStream();
+  refreshTasks();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5000
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:11571) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5000
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:14331) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Error occurred while proxying request 10.48.94.251:5000/api/events to http://127.0.0.1:8000/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5001
+[node] Proxying /api -> http://127.0.0.1:8000
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5002
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:15166) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5002
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:16589) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5002
+[node] Proxying /api -> http://127.0.0.1:8000
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:19637) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:21036) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:22859) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:23446) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:24821) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:27172) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[HPM] Proxy created: /  -> http://127.0.0.1:8000
+[node] Video Separator front server listening on 0.0.0.0:5003
+[node] Proxying /api -> http://127.0.0.1:8000
+(node:28324) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

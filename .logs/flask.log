@@ -1,0 +1,189 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 12:02:50] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:02:50] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:02:50] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:03:15] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:03:50] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 12:03:50] "GET /api/events/c6b2ee3822b24938bbaf2bb6599e3f5e HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:05:42] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:05:50] "GET /api/download/c6b2ee3822b24938bbaf2bb6599e3f5e HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:07:44] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 12:07:44] "GET /api/events/6cbbd5141618477995c634eefd318d20 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:08:00] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:08:08] "GET /api/download/6cbbd5141618477995c634eefd318d20 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:30] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:36] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:36] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:36] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:40] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:40] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:16:40] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:46:59] "[33mGET /api/network HTTP/1.1[0m" 404 -
+127.0.0.1 - - [22/Sep/2026 12:46:59] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:46:59] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:47:46] "[33mGET /api/network HTTP/1.1[0m" 404 -
+127.0.0.1 - - [22/Sep/2026 12:47:46] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:47:46] "GET /api/events HTTP/1.1" 200 -
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 438
+    def network_info():
+IndentationError: unexpected unindent
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 438
+    def network_info():
+IndentationError: unexpected unindent
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 13:04:21] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:04:21] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:04:21] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:05:29] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:05:29] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:05:29] "GET /api/events HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 13:33:22] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:33:25] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:33:25] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:33:25] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:34:31] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:34:31] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:34:31] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:35:09] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 13:35:09] "GET /api/events/e643c4046885489bbec7e43307922d7c HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 13:35:23] "GET /api/tasks HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 17, in <module>
+    from flask import Flask, request, jsonify, send_file, Response, stream_with_context
+ModuleNotFoundError: No module named 'flask'
+Traceback (most recent call last):
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 17, in <module>
+    from flask import Flask, request, jsonify, send_file, Response, stream_with_context
+ModuleNotFoundError: No module named 'flask'
+Traceback (most recent call last):
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 17, in <module>
+    from flask import Flask, request, jsonify, send_file, Response, stream_with_context
+ModuleNotFoundError: No module named 'flask'
+Traceback (most recent call last):
+  File "/home/hanann/Desktop/computer network grp/projects/video-separator/app.py", line 17, in <module>
+    from flask import Flask, request, jsonify, send_file, Response, stream_with_context
+ModuleNotFoundError: No module named 'flask'
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 14:12:10] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:12:10] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:12:10] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:13:15] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 14:13:15] "GET /api/events/87d165e21045409f9acc308585f34e23 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:13:25] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:13:34] "GET /api/download/87d165e21045409f9acc308585f34e23 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:13:47] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 14:13:47] "GET /api/events/152660244c354d38853b9777b99237c1 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:13:49] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:14:37] "GET /api/download/152660244c354d38853b9777b99237c1 HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 14:22:52] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:22:52] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:22:53] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:24:07] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 14:24:07] "GET /api/events/d640ff69cea645abba531a4323547259 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:24:13] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:24:27] "GET /api/download/d640ff69cea645abba531a4323547259 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:26:53] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:38:13] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:38:13] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:38:13] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:38:32] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 14:38:32] "GET /api/events/193cf890411c40099ed27b040269d3a8 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:38:49] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:40:29] "GET /api/download/193cf890411c40099ed27b040269d3a8 HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 14:42:46] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:42:46] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:42:46] "GET /api/events HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 16:30:35] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 16:30:35] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 16:30:35] "GET /api/events HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.48.94.251:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 16:49:47] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 16:49:47] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 16:49:48] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 16:49:48] "GET /api/events HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.15.10.123:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 17:30:51] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:30:51] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:30:51] "GET /api/events HTTP/1.1" 200 -
+[flask] Starting on 0.0.0.0:8000
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.8:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 19:04:23] "GET /api/network HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:04:23] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:04:23] "GET /api/events HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:05:27] "[35m[1mPOST /api/upload HTTP/1.1[0m" 202 -
+127.0.0.1 - - [22/Sep/2026 19:05:27] "GET /api/events/58638dc18a6b4368bee8fe07daa10875 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:05:32] "GET /api/tasks HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:05:34] "GET /api/download/58638dc18a6b4368bee8fe07daa10875 HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 19:27:36] "GET /api/events HTTP/1.1" 200 -
